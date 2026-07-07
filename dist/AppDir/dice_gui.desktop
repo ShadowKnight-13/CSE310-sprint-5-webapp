@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Dice GUI
+Exec=dice_gui
+Icon=dice_gui
+Categories=Game;
+Terminal=false

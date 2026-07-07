@@ -1,0 +1,44 @@
+[
+  {
+    "name": "STR save",
+    "notation": "1d20+9",
+    "category": "Saving Throws",
+    "subcategory": "",
+    "notes": ""
+  },
+  {
+    "name": "Con save",
+    "notation": "1d20+8",
+    "category": "Saving Throws",
+    "subcategory": "",
+    "notes": ""
+  },
+  {
+    "name": "Fireball",
+    "notation": "8d6",
+    "category": "Spells",
+    "subcategory": "",
+    "notes": ""
+  },
+  {
+    "name": "1d20",
+    "notation": "1d20",
+    "category": "Straight Dice",
+    "subcategory": "",
+    "notes": ""
+  },
+  {
+    "name": "Longsword",
+    "notation": "2d6+5",
+    "category": "Attacks",
+    "subcategory": "Ranged",
+    "notes": "120/600ft 20arrows"
+  },
+  {
+    "name": "+3 Warhammer",
+    "notation": "2d12+12",
+    "category": "Attacks",
+    "subcategory": "Melee",
+    "notes": "Reach 10ft"
+  }
+]

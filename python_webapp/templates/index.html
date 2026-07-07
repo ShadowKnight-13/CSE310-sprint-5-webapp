@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dice Atlas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body class="bg-harbor">
+    <div class="aurora"></div>
+    <main class="shell history-hidden" id="shell">
+      <header class="hero">
+        <p class="kicker">Python Web Conversion</p>
+        <h1>Dice Atlas</h1>
+        <p class="subtitle">Roll DnD notation, manage favorites, track session stats, and run quick calculations in one place.</p>
+      </header>
+
+      <section class="panel roll-panel">
+        <div class="row">
+          <label for="notation">Notation</label>
+          <input id="notation" type="text" value="2d6+1" placeholder="2d6+1" />
+        </div>
+
+        <div class="row mode-row">
+          <label>Mode</label>
+          <div class="pills" id="mode-switch">
+            <button class="pill active" data-mode="normal">Normal</button>
+            <button class="pill" data-mode="advantage">Advantage</button>
+            <button class="pill" data-mode="disadvantage">Disadvantage</button>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="roll-btn" class="btn strong">Roll</button>
+          <button id="save-favorite-btn" class="btn">Save Favorite</button>
+          <button id="toggle-history-btn" class="btn ghost">Show Recent Rolls</button>
+        </div>
+
+        <section id="favorite-save-panel" class="panel-inline hidden" aria-hidden="true">
+          <h3 class="panel-inline-title">Save Favorite</h3>
+          <div class="row compact">
+            <input id="favorite-notation-preview" type="text" readonly />
+            <input id="favorite-name" type="text" placeholder="Favorite name" />
+          </div>
+          <div class="row compact single-right">
+            <input id="favorite-category" type="text" value="General" placeholder="Category" />
+          </div>
+          <div class="row compact single-right">
+            <input id="favorite-subcategory" type="text" value="" placeholder="Subcategory (optional)" />
+          </div>
+          <div class="actions">
+            <button id="confirm-save-favorite-btn" class="btn strong">Confirm Save</button>
+            <button id="cancel-save-favorite-btn" class="btn ghost">Cancel</button>
+          </div>
+        </section>
+
+        <details class="settings-panel" id="settings-panel">
+          <summary>Settings</summary>
+          <div class="settings-grid">
+            <label class="settings-row" for="dark-mode-toggle">
+              <span>Dark Mode</span>
+              <input id="dark-mode-toggle" type="checkbox" />
+            </label>
+            <label class="settings-row" for="dense-mode-toggle">
+              <span>Dense Mode</span>
+              <input id="dense-mode-toggle" type="checkbox" />
+            </label>
+            <label class="settings-row" for="background-select">
+              <span>Background</span>
+              <select id="background-select">
+                <option value="harbor">Harbor Glow</option>
+                <option value="ember">Ember Sky</option>
+                <option value="forest">Forest Mist</option>
+                <option value="midnight">Midnight Arc</option>
+                <option value="sunrise">Sunrise Drift</option>
+                <option value="glacier">Glacier Veil</option>
+              </select>
+            </label>
+            <div class="settings-row">
+              <span>Layout</span>
+              <button id="reset-layout-btn" class="btn ghost btn-compact" type="button">Reset Layout</button>
+            </div>
+          </div>
+        </details>
+
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+
+        <div class="result-card" id="latest-result">
+          <h2>Latest Roll</h2>
+          <p class="muted">No roll yet.</p>
+        </div>
+      </section>
+
+      <section class="grid">
+        <article class="panel favorites-panel">
+          <div class="panel-head">
+            <h2>Favorites</h2>
+            <input id="favorite-search" type="search" placeholder="Search by name, notation, or category" />
+          </div>
+
+          <div class="actions" id="favorites-controls">
+            <button id="toggle-category-sort-btn" class="btn ghost">Category Sort: On</button>
+            <button id="toggle-collapse-all-btn" class="btn ghost">Collapse All</button>
+          </div>
+          <p id="favorites-hint" class="context-hint" aria-live="polite"></p>
+          <div id="subcategory-filters" class="chip-row" aria-label="Subcategory filters"></div>
+
+          <div id="favorites-list" class="favorites-list"></div>
+        </article>
+
+        <article class="panel history-panel">
+          <div class="panel-head">
+            <h2>Recent Rolls</h2>
+            <button id="clear-history-btn" class="btn ghost">Clear</button>
+          </div>
+          <ul id="history-list" class="history-list"></ul>
+        </article>
+
+        <article class="panel calculator-panel">
+          <h2>Calculator</h2>
+          <p class="muted">Use +, -, *, /, %, //, ** and parentheses. You can reference previous result as ans.</p>
+          <textarea id="calc-expression" rows="3" placeholder="(12+5)*2"></textarea>
+          <div class="actions">
+            <button id="calc-btn" class="btn">Calculate</button>
+            <button id="calc-insert-ans" class="btn ghost">Insert ans</button>
+          </div>
+          <div id="calc-status" class="status" role="status" aria-live="polite"></div>
+          <ul id="calc-log" class="history-list"></ul>
+        </article>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>

@@ -1,0 +1,3 @@
+[workspace]
+members = ["dice_core", "dice_gui"]
+resolver = "2"
