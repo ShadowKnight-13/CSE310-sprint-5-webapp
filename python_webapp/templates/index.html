@@ -39,7 +39,7 @@
         <div class="actions">
           <button id="roll-btn" class="btn strong">Roll</button>
           <button id="save-favorite-btn" class="btn">Save Favorite</button>
-          <button id="toggle-history-btn" class="btn ghost">Show Recent Rolls</button>
+          <button id="show-history-panel-btn" class="btn ghost">Show Roll Log</button>
         </div>
 
         <section id="favorite-save-panel" class="panel-inline hidden" aria-hidden="true">
@@ -116,9 +116,15 @@
 
         <article class="panel history-panel">
           <div class="panel-head">
-            <h2>Recent Rolls</h2>
-            <button id="clear-history-btn" class="btn ghost">Clear</button>
+            <h2>Roll Log</h2>
+            <div class="actions history-actions">
+              <button id="toggle-history-btn" class="btn ghost">Show Full Log</button>
+              <button id="hide-history-panel-btn" class="btn ghost">Hide Log Column</button>
+              <button id="history-filter-reset-btn" class="btn ghost" hidden>Show All Rolls</button>
+              <button id="clear-history-btn" class="btn ghost">Clear Log</button>
+            </div>
           </div>
+          <p id="history-summary" class="context-hint" aria-live="polite"></p>
           <ul id="history-list" class="history-list"></ul>
         </article>
 

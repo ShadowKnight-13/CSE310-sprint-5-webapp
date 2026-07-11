@@ -1,9 +1,13 @@
 const state = {
   mode: "normal",
   favorites: [],
+  historyEntries: [],
   calcAns: null,
   calcLog: [],
   showHistory: false,
+  historyViewMode: "recent",
+  historyFilterKey: null,
+  historyFilterLabel: "",
   dragFavoriteId: null,
   dragTargetFavoriteId: null,
   dragTargetPosition: "before",
@@ -28,6 +32,7 @@ const notationInput = document.getElementById("notation");
 const statusEl = document.getElementById("status");
 const latestResultEl = document.getElementById("latest-result");
 const historyPanelEl = document.querySelector(".history-panel");
+const historySummaryEl = document.getElementById("history-summary");
 const historyListEl = document.getElementById("history-list");
 const favoriteSavePanelEl = document.getElementById("favorite-save-panel");
 const favoriteNotationPreviewInput = document.getElementById("favorite-notation-preview");
@@ -39,7 +44,9 @@ const favoritesHintEl = document.getElementById("favorites-hint");
 const subcategoryFiltersEl = document.getElementById("subcategory-filters");
 const favoritesListEl = document.getElementById("favorites-list");
 const settingsPanelEl = document.getElementById("settings-panel");
+const showHistoryPanelBtn = document.getElementById("show-history-panel-btn");
 const toggleHistoryBtn = document.getElementById("toggle-history-btn");
+const hideHistoryPanelBtn = document.getElementById("hide-history-panel-btn");
 const confirmSaveFavoriteBtn = document.getElementById("confirm-save-favorite-btn");
 const cancelSaveFavoriteBtn = document.getElementById("cancel-save-favorite-btn");
 const toggleCategorySortBtn = document.getElementById("toggle-category-sort-btn");
@@ -48,6 +55,7 @@ const darkModeToggle = document.getElementById("dark-mode-toggle");
 const denseModeToggle = document.getElementById("dense-mode-toggle");
 const backgroundSelect = document.getElementById("background-select");
 const resetLayoutBtn = document.getElementById("reset-layout-btn");
+const historyFilterResetBtn = document.getElementById("history-filter-reset-btn");
 const calcExpressionInput = document.getElementById("calc-expression");
 const calcStatusEl = document.getElementById("calc-status");
 const calcLogEl = document.getElementById("calc-log");
@@ -130,6 +138,10 @@ function displaySubcategory(value) {
   return (value || "").trim() || "Unsorted";
 }
 
+function getFavoriteLogKey(favorite) {
+  return `${favorite.notation}|${getFavoriteCategory(favorite)}|${(favorite.subcategory || "").trim()}`;
+}
+
 function countNoteLines(notes) {
   return (notes || "")
     .split(/\r?\n+/)
@@ -166,8 +178,14 @@ function ensureFavoriteIds() {
 function setHistoryVisibility(show) {
   state.showHistory = show;
   shellEl.classList.toggle("history-hidden", !show);
-  toggleHistoryBtn.textContent = show ? "Hide Recent Rolls" : "Show Recent Rolls";
   historyPanelEl.setAttribute("aria-hidden", show ? "false" : "true");
+  if (showHistoryPanelBtn) {
+    showHistoryPanelBtn.hidden = show;
+  }
+  if (hideHistoryPanelBtn) {
+    hideHistoryPanelBtn.hidden = !show;
+  }
+  refreshHistoryView();
 }
 
 function setFavoriteSavePanelVisibility(show) {
@@ -383,18 +401,47 @@ function renderResult(result) {
   `;
 }
 
-function renderHistory(items) {
-  historyListEl.innerHTML = "";
-  if (items.length === 0) {
-    historyListEl.innerHTML = '<li class="history-item muted">No rolls yet.</li>';
+function updateHistoryControls() {
+  toggleHistoryBtn.textContent = state.historyViewMode === "all" ? "Show Recent Rolls" : "Show Full Log";
+  historyFilterResetBtn.hidden = !state.historyFilterKey;
+  if (state.historyFilterKey) {
+    historySummaryEl.textContent = `Viewing ${state.historyViewMode === "all" ? "the full" : "recent"} log for ${state.historyFilterLabel}.`;
+    historyFilterResetBtn.textContent = "Show All Rolls";
     return;
   }
 
-  const preview = items.slice(0, 12);
-  preview.forEach((entry) => {
+  historySummaryEl.textContent = state.historyViewMode === "all" ? "Viewing the full roll log." : "Viewing the most recent rolls.";
+}
+
+function getVisibleHistoryEntries() {
+  const filteredEntries = state.historyFilterKey
+    ? state.historyEntries.filter((entry) => entry.favoriteLogKey === state.historyFilterKey)
+    : state.historyEntries;
+
+  if (state.historyViewMode === "all") {
+    return filteredEntries;
+  }
+
+  return filteredEntries.slice(0, 12);
+}
+
+function refreshHistoryView() {
+  updateHistoryControls();
+  renderHistory(getVisibleHistoryEntries());
+}
+
+function renderHistory(items) {
+  historyListEl.innerHTML = "";
+  if (items.length === 0) {
+    historyListEl.innerHTML = state.historyFilterKey ? '<li class="history-item muted">No rolls matched that favorite yet.</li>' : '<li class="history-item muted">No rolls yet.</li>';
+    return;
+  }
+
+  items.forEach((entry) => {
     const item = document.createElement("li");
     item.className = "history-item";
-    item.textContent = `${entry.notation} => [${entry.results.join(", ")}] = ${entry.total}`;
+    const favoriteLabel = entry.favorite?.name ? `${entry.favorite.name} · ` : "";
+    item.textContent = `${favoriteLabel}${entry.notation} => [${entry.results.join(", ")}] = ${entry.total}`;
     historyListEl.appendChild(item);
   });
 }
@@ -763,6 +810,7 @@ function renderFavorites() {
             <div class="favorite-actions">
               <button class="btn" data-action="roll">Roll</button>
               <button class="btn ghost" data-action="use">Use</button>
+              <button class="btn ghost" data-action="view-log">View Log</button>
               <button class="btn ghost" data-action="save">Save</button>
               <button class="btn ghost" data-action="remove">Remove</button>
             </div>
@@ -808,6 +856,9 @@ function renderFavorites() {
           item.querySelector('[data-action="use"]').addEventListener("click", () => {
             notationInput.value = favorite.notation;
             setStatus("Favorite notation copied into input.");
+          });
+          item.querySelector('[data-action="view-log"]').addEventListener("click", () => {
+            viewFavoriteLog(favorite);
           });
           item.querySelector('[data-action="save"]').addEventListener("click", async () => {
             await handleFavoriteEditSave(favorite._id, item);
@@ -872,7 +923,8 @@ function renderCalcLog() {
 
 async function loadHistory() {
   const history = await api("/api/history");
-  renderHistory(history);
+  state.historyEntries = history;
+  refreshHistoryView();
 }
 
 async function loadFavorites() {
@@ -1034,6 +1086,15 @@ async function rollFavorite(favorite) {
   }
 }
 
+function viewFavoriteLog(favorite) {
+  state.historyFilterKey = getFavoriteLogKey(favorite);
+  state.historyFilterLabel = `${favorite.name} (${favorite.notation})`;
+  state.historyViewMode = "all";
+  setHistoryVisibility(true);
+  refreshHistoryView();
+  setStatus(`Showing log entries for ${favorite.name}.`);
+}
+
 async function calculate() {
   const expression = calcExpressionInput.value.trim();
   if (!expression) {
@@ -1085,7 +1146,19 @@ favoriteSavePanelEl.addEventListener("keydown", async (event) => {
   }
 });
 document.getElementById("toggle-history-btn").addEventListener("click", () => {
-  setHistoryVisibility(!state.showHistory);
+  state.historyViewMode = state.historyViewMode === "all" ? "recent" : "all";
+  setHistoryVisibility(true);
+});
+showHistoryPanelBtn.addEventListener("click", () => {
+  setHistoryVisibility(true);
+});
+hideHistoryPanelBtn.addEventListener("click", () => {
+  setHistoryVisibility(false);
+});
+historyFilterResetBtn.addEventListener("click", () => {
+  state.historyFilterKey = null;
+  state.historyFilterLabel = "";
+  refreshHistoryView();
 });
 toggleCategorySortBtn.addEventListener("click", () => {
   state.sortByCategory = !state.sortByCategory;
@@ -1107,8 +1180,12 @@ toggleCollapseAllBtn.addEventListener("click", () => {
 });
 document.getElementById("clear-history-btn").addEventListener("click", async () => {
   await api("/api/history/clear", { method: "POST" });
+  state.historyEntries = [];
+  state.historyFilterKey = null;
+  state.historyFilterLabel = "";
   setStatus("Roll history cleared.");
-  await loadHistory();
+  refreshHistoryView();
+  await loadFavorites();
 });
 document.getElementById("calc-btn").addEventListener("click", calculate);
 document.getElementById("calc-insert-ans").addEventListener("click", () => {

@@ -142,6 +142,10 @@ def stats_key(favorite: dict[str, str]) -> str:
     return f"{favorite['name']}|{favorite['notation']}|{favorite['category']}|{favorite.get('subcategory', '')}"
 
 
+def favorite_log_key(favorite: dict[str, str]) -> str:
+    return f"{favorite['notation']}|{favorite['category']}|{favorite.get('subcategory', '')}"
+
+
 def record_favorite_total(favorite: dict[str, str], total: int) -> None:
     key = stats_key(favorite)
     entry = FAVORITE_SESSION_STATS.setdefault(
@@ -359,8 +363,10 @@ def roll() -> Any:
             "notePinned": bool(favorite.get("notePinned", False)),
         }
         record_favorite_total(normalized_favorite, result["total"])
+        result["favorite"] = normalized_favorite
+        result["favoriteLogKey"] = favorite_log_key(normalized_favorite)
 
-    ROLL_HISTORY.appendleft(result)
+    ROLL_HISTORY.appendleft(dict(result))
     return jsonify(result)
 
 
@@ -372,6 +378,7 @@ def get_history() -> Any:
 @app.post("/api/history/clear")
 def clear_history() -> Any:
     ROLL_HISTORY.clear()
+    FAVORITE_SESSION_STATS.clear()
     return jsonify({"ok": True})
 
 

@@ -398,6 +398,10 @@ select:focus-visible,
   margin-bottom: 0.7rem;
 }
 
+.history-actions {
+  justify-content: flex-end;
+}
+
 .panel-head input {
   max-width: 320px;
 }
@@ -692,6 +696,49 @@ body.dark-mode .favorite-badge {
 
 body.dark-mode .favorite-meta {
   color: #c3d2df;
+}
+
+body.dark-mode .settings-row {
+  color: #d8e4ee;
+}
+
+body.dark-mode .settings-panel summary {
+  color: #f1f7fc;
+}
+
+body.dark-mode .panel-inline {
+  background: rgba(18, 28, 38, 0.88);
+}
+
+body.dark-mode .result-card {
+  background: rgba(11, 20, 30, 0.5);
+}
+
+body.dark-mode .history-item {
+  background: rgba(10, 18, 28, 0.92);
+  border-color: rgba(164, 196, 222, 0.25);
+  color: var(--text-main);
+}
+
+body.dark-mode .btn {
+  background: rgba(18, 28, 38, 0.86);
+  color: var(--text-main);
+}
+
+body.dark-mode .btn:hover {
+  background: rgba(28, 39, 52, 0.96);
+}
+
+body.dark-mode .btn.ghost {
+  background: transparent;
+}
+
+body.dark-mode .pill {
+  color: var(--text-main);
+}
+
+body.dark-mode .pill.active {
+  color: #fff;
 }
 
 .favorite-actions {
