@@ -882,9 +882,14 @@ function renderFavorites() {
             favorite.subcategory = subcategoryField.value.trim();
             scheduleFavoritesAutosave();
           });
-          notesField.addEventListener("input", () => {
-            favorite.notes = notesField.value;
+          notesField.addEventListener("keydown", (event) => {
+            if (event.key !== "Enter") {
+              return;
+            }
+            event.preventDefault();
+            favorite.notes = notesField.value.trim();
             scheduleFavoritesAutosave();
+            notesField.blur();
           });
           notesField.addEventListener("blur", () => {
             favorite.notes = notesField.value.trim();
