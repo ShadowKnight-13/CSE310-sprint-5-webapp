@@ -26,18 +26,17 @@ The expected minimum amount of time each Sprint for each category is as follows:
 
 |Date      |Start Time|Category|Description                                 |Total Minutes|
 |----------|----------|:------:|--------------------------------------------|:-----------:|
-| 06/08/26 |          | IM     | Planning doumenting and brainstorming      |  90         |
-| 06/09/26 |          | TP     |                                            | 60          |
-| 06/09/26 |          | IM     | setting up rust enviroment                 | 60          |
-| 06/11/26 |          |  TP    |                                            | 60          |
-| 06/11/26 |          | IM     | Inital build                               | 90          |
-| 06/13/26 |          | IM     | Testing, bug fixing, improvements          | 120         |
-| 06/16/26 |          | TP     |                                            | 60          |
-| 06/16/26 |          | IM     | Testing, bug fixing, improvements          |  90         |
-| 06/18/26 |          | TP     |                                            | 60          |
-| 06/18/26 |          | IM     | Testing, bug fixing, improvements          | 90          |
-| 06/19/26 |          | IM     | trying to build excutable file for linux   | 120         |
-| 06/20/26 |          | IM     | Final documentation                        |  60         |
+| 06/22/26 |          | IM     | Planning doumenting and brainstorming      |  90         |
+| 06/23/26 |          | TP     |                                            | 60          |
+| 06/23/26 |          | IM     | setting up python webbapp enviroment       | 60          |
+| 06/25/26 |          |  TP    |                                            | 60          |
+| 06/25/26 |          | IM     | Inital build                               | 90          |
+| 06/26/26 |          | IM     | Testing, bug fixing, improvements          | 120         |
+| 06/30/26 |          | TP     |                                            | 60          |
+| 07/07/26 |          | IM     | Testing, bug fixing, improvements          |  90         |
+| 07/07/26 |          | TP     |                                            | 60          |
+| 07/09/26 |          | IM     | Testing, bug fixing, improvements          | 90          |
+| 07/14/26 |          | IM     | Final documentation  and final bug fixes   |  90         |
 |          |          |        |                                            |             |
 |          |          |        |                                            |             |
 |          |          |        |                                            |             |
